@@ -2,7 +2,6 @@
 Description=Claim Google Faucet Ethereum Sepolia ETH
 Wants=network-online.target
 After=network-online.target
-OnSuccess=ethereum-sepolia-sweep.service
 
 [Service]
 Type=oneshot
@@ -10,4 +9,4 @@ User=ubuntu
 StateDirectory=google-sepolia-claim
 StateDirectoryMode=0755
 ExecStart=/usr/bin/python3 -I /usr/local/libexec/claim-google-sepolia.py --daily
-TimeoutStartSec=25min
+TimeoutStartSec=5min

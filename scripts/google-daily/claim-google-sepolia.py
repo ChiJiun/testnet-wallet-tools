@@ -97,6 +97,7 @@ def run(address, marker=None):
             if any(message in text for message in (
                 "rate limit exceeded", "try again tomorrow", "daily limit reached", "too many requests",
                 "have already", "quota exceeded", "claim limit", "verify you are human",
+                "each google account and wallet address gets one drip",
             )):
                 raise RuntimeError("Faucet reported a quota or verification requirement")
             time.sleep(2)
@@ -132,7 +133,6 @@ def confirm_claim(address, tx):
 
 def main():
     marker = None
-    candidates = None
     if sys.argv[1:] == ["--daily"]:
         from datetime import datetime
         from pathlib import Path
@@ -145,10 +145,7 @@ def main():
         marker = Path(os.environ["STATE_DIRECTORY"]) / today.isoformat()
         if marker.exists():
             return
-        candidates = marker.with_suffix(".indices")
-        start = today.toordinal() % len(addresses)
-        indices = list(range(start, len(addresses))) + list(range(start))
-        recipients = [(i, addresses[i]) for i in indices]
+        recipients = [(0, addresses[0])]
     elif len(sys.argv) == 2 and ADDRESS.fullmatch(sys.argv[1]):
         recipients = [(0, sys.argv[1])]
     else:
@@ -158,9 +155,6 @@ def main():
     for index, address in recipients:
         print(f"Google Faucet recipient index: {index}", flush=True)
         try:
-            if candidates is not None:
-                with candidates.open("a", encoding="ascii") as stream:
-                    stream.write(f"{index}\n")
             tx = run(address, marker if confirmed == 0 else None)
             if tx is None:
                 return
