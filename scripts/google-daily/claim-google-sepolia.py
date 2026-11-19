@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import subprocess
 import sys
@@ -28,7 +29,7 @@ def call(path, body=None, method=None):
         return json.load(response)["value"]
 
 
-def run(address):
+def run(address, marker=None):
     driver = subprocess.Popen(["/snap/bin/geckodriver", "--host", "127.0.0.1", "--port", str(PORT)],
                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     session = None
@@ -78,6 +79,12 @@ def run(address):
         if not button:
             raise RuntimeError("Claim button unavailable")
         element = next(iter(button.values()))
+        if marker is not None:
+            try:
+                marker.touch(mode=0o600, exist_ok=False)
+            except FileExistsError:
+                print('Google Faucet already attempted today', flush=True)
+                return
         print("Submitting one Ethereum Sepolia claim", flush=True)
         call(base + f"/element/{element}/click", {})
         for _ in range(45):
@@ -106,6 +113,7 @@ def run(address):
 
 
 if __name__ == "__main__":
+    marker = None
     if sys.argv[1:] == ["--daily"]:
         from datetime import datetime
         from pathlib import Path
@@ -114,13 +122,17 @@ if __name__ == "__main__":
         addresses = Path("/etc/google-sepolia-addresses").read_text().splitlines()
         if len(addresses) != 10 or not all(ADDRESS.fullmatch(a) for a in addresses):
             sys.exit("Expected 10 configured public addresses")
-        index = datetime.now(ZoneInfo("Asia/Taipei")).date().toordinal() % len(addresses)
+        today = datetime.now(ZoneInfo("Asia/Taipei")).date()
+        marker = Path(os.environ["STATE_DIRECTORY"]) / today.isoformat()
+        if marker.exists():
+            sys.exit(0)
+        index = today.toordinal() % len(addresses)
         print(f"Google Faucet recipient index: {index}", flush=True)
         sys.argv[1] = addresses[index]
     if len(sys.argv) != 2 or not ADDRESS.fullmatch(sys.argv[1]):
         sys.exit("Supply one public Ethereum address")
     try:
-        run(sys.argv[1])
+        run(sys.argv[1], marker)
     except RuntimeError as error:
         sys.exit(str(error))
     except Exception as error:
