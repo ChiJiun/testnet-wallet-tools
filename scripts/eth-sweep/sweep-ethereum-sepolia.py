@@ -1,6 +1,9 @@
 import os
 import sys
 import time
+from datetime import datetime, timedelta
+from pathlib import Path
+from zoneinfo import ZoneInfo
 
 sys.path.insert(0, "/home/devspace/projects/testnet-wallet-tools")
 from wallet import balance, fee_fields, rpc, wallets
@@ -36,7 +39,13 @@ def sweep(account, target):
 
 
 def main():
-    accounts = wallets(10)
+    indices = set(range(1, 10))
+    today = datetime.now(ZoneInfo("Asia/Taipei")).date()
+    for day in (today, today - timedelta(days=1)):
+        record = Path("/var/lib/google-sepolia-claim") / (day.isoformat() + ".indices")
+        if record.is_file():
+            indices.update(int(i) for i in record.read_text().splitlines() if i.isdecimal() and 0 < int(i) < 1000)
+    accounts = wallets(max(indices) + 1)
     target = accounts[0].address
     if target.lower() != os.environ.get("CELO_FAUCET_BENEFICIARY", "").lower():
         raise ValueError("Configured beneficiary does not match index 0")
@@ -45,7 +54,8 @@ def main():
     if rpc(URL, "eth_getCode", [target, "latest"]) != "0x":
         raise ValueError("Expected a regular collector account")
     failed = False
-    for i, account in enumerate(accounts[1:], 1):
+    for i in sorted(indices):
+        account = accounts[i]
         try:
             tx = sweep(account, target)
             print(f"Index {i}: confirmed {tx}" if tx else f"Index {i}: no ETH above gas cost")

@@ -8,6 +8,6 @@ OnSuccess=ethereum-sepolia-sweep.service
 Type=oneshot
 User=ubuntu
 StateDirectory=google-sepolia-claim
-StateDirectoryMode=0700
+StateDirectoryMode=0755
 ExecStart=/usr/bin/python3 -I /usr/local/libexec/claim-google-sepolia.py --daily
 TimeoutStartSec=25min

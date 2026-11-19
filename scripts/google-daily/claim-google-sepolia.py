@@ -132,18 +132,20 @@ def confirm_claim(address, tx):
 
 def main():
     marker = None
+    candidates = None
     if sys.argv[1:] == ["--daily"]:
         from datetime import datetime
         from pathlib import Path
         from zoneinfo import ZoneInfo
 
         addresses = Path("/etc/google-sepolia-addresses").read_text().splitlines()
-        if len(addresses) != 10 or not all(ADDRESS.fullmatch(a) for a in addresses):
-            sys.exit("Expected 10 configured public addresses")
+        if len(addresses) != 1000 or not all(ADDRESS.fullmatch(a) for a in addresses):
+            sys.exit("Expected 1000 configured public addresses")
         today = datetime.now(ZoneInfo("Asia/Taipei")).date()
         marker = Path(os.environ["STATE_DIRECTORY"]) / today.isoformat()
         if marker.exists():
             return
+        candidates = marker.with_suffix(".indices")
         start = today.toordinal() % len(addresses)
         indices = list(range(start, len(addresses))) + list(range(start))
         recipients = [(i, addresses[i]) for i in indices]
@@ -156,6 +158,9 @@ def main():
     for index, address in recipients:
         print(f"Google Faucet recipient index: {index}", flush=True)
         try:
+            if candidates is not None:
+                with candidates.open("a", encoding="ascii") as stream:
+                    stream.write(f"{index}\n")
             tx = run(address, marker if confirmed == 0 else None)
             if tx is None:
                 return
