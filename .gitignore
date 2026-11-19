@@ -1,0 +1,17 @@
+# Never commit secrets or credentials
+secrets/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.keystore
+*.wallet
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+reports/
+*.audit.json
+.DS_Store
