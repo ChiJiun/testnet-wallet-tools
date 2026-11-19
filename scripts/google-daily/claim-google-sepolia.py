@@ -84,7 +84,7 @@ def run(address, marker=None):
                 marker.touch(mode=0o600, exist_ok=False)
             except FileExistsError:
                 print('Google Faucet already attempted today', flush=True)
-                return
+                return None
         print("Submitting one Ethereum Sepolia claim", flush=True)
         call(base + f"/element/{element}/click", {})
         for _ in range(45):
@@ -92,8 +92,7 @@ def run(address, marker=None):
             for link in page["links"]:
                 match = HASH.search(link)
                 if match:
-                    print("Claim transaction:", match.group(), flush=True)
-                    return
+                    return match.group()
             text = page["text"].lower()
             if any(message in text for message in (
                 "rate limit exceeded", "try again tomorrow", "daily limit reached", "too many requests",
@@ -112,7 +111,26 @@ def run(address, marker=None):
         driver.wait(timeout=10)
 
 
-if __name__ == "__main__":
+def confirm_claim(address, tx):
+    request = Request(
+        "https://ethereum-sepolia-rpc.publicnode.com",
+        data=json.dumps({
+            "jsonrpc": "2.0", "id": 1, "method": "eth_getTransactionReceipt", "params": [tx],
+        }).encode(),
+        headers={"Content-Type": "application/json"},
+    )
+    for _ in range(10):
+        with urlopen(request, timeout=10) as response:
+            receipt = json.load(response).get("result")
+        if receipt is not None:
+            if receipt.get("status") != "0x1" or (receipt.get("to") or "").lower() != address.lower():
+                raise RuntimeError("Unexpected on-chain faucet receipt")
+            return
+        time.sleep(3)
+    raise RuntimeError("Faucet transaction is not yet confirmed on-chain")
+
+
+def main():
     marker = None
     if sys.argv[1:] == ["--daily"]:
         from datetime import datetime
@@ -125,15 +143,33 @@ if __name__ == "__main__":
         today = datetime.now(ZoneInfo("Asia/Taipei")).date()
         marker = Path(os.environ["STATE_DIRECTORY"]) / today.isoformat()
         if marker.exists():
-            sys.exit(0)
-        index = today.toordinal() % len(addresses)
+            return
+        start = today.toordinal() % len(addresses)
+        indices = list(range(start, len(addresses))) + list(range(start))
+        recipients = [(i, addresses[i]) for i in indices]
+    elif len(sys.argv) == 2 and ADDRESS.fullmatch(sys.argv[1]):
+        recipients = [(0, sys.argv[1])]
+    else:
+        sys.exit("Supply one public Ethereum address or --daily")
+
+    confirmed = 0
+    for index, address in recipients:
         print(f"Google Faucet recipient index: {index}", flush=True)
-        sys.argv[1] = addresses[index]
-    if len(sys.argv) != 2 or not ADDRESS.fullmatch(sys.argv[1]):
-        sys.exit("Supply one public Ethereum address")
-    try:
-        run(sys.argv[1], marker)
-    except RuntimeError as error:
-        sys.exit(str(error))
-    except Exception as error:
-        sys.exit(f"Browser automation failed ({type(error).__name__})")
+        try:
+            tx = run(address, marker if confirmed == 0 else None)
+            if tx is None:
+                return
+            confirm_claim(address, tx)
+        except Exception as error:
+            reason = str(error) if isinstance(error, RuntimeError) else type(error).__name__
+            print(f"Google Faucet stopped at index {index}: {reason}", file=sys.stderr, flush=True)
+            if confirmed == 0:
+                sys.exit(1)
+            break
+        confirmed += 1
+        print(f"Claim transaction: {tx} (index {index}, confirmed)", flush=True)
+    print(f"Google Faucet confirmed {confirmed} claim(s)", flush=True)
+
+
+if __name__ == "__main__":
+    main()
