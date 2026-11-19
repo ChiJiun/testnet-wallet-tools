@@ -1,0 +1,42 @@
+{
+  "sepolia": {
+    "chain_id": 11155111,
+    "rpc_env": "RPC_SEPOLIA",
+    "faucet": "https://cloud.google.com/application/web3/faucet/ethereum/sepolia"
+  },
+  "base_sepolia": {
+    "chain_id": 84532,
+    "rpc_env": "RPC_BASE_SEPOLIA",
+    "faucet": "https://docs.base.org/base-chain/tools/network-faucets"
+  },
+  "arc_testnet": {
+    "chain_id": null,
+    "rpc_env": "RPC_ARC_TESTNET",
+    "faucet": null
+  },
+  "codex_sepolia": {
+    "chain_id": null,
+    "rpc_env": "RPC_CODEX_SEPOLIA",
+    "faucet": null
+  },
+  "hyperevm_testnet": {
+    "chain_id": 998,
+    "rpc_env": "RPC_HYPEREVM_TESTNET",
+    "faucet": null
+  },
+  "arbitrum_sepolia": {
+    "chain_id": 421614,
+    "rpc_env": "RPC_ARBITRUM_SEPOLIA",
+    "faucet": null
+  },
+  "optimism_sepolia": {
+    "chain_id": 11155420,
+    "rpc_env": "RPC_OPTIMISM_SEPOLIA",
+    "faucet": null
+  },
+  "polygon_amoy": {
+    "chain_id": 80002,
+    "rpc_env": "RPC_POLYGON_AMOY",
+    "faucet": null
+  }
+}
