@@ -1,0 +1,7 @@
+[Unit]
+Description=Check daily Celo faucet completion
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 -I /usr/local/libexec/celo-faucet-watchdog.py
+NoNewPrivileges=yes
