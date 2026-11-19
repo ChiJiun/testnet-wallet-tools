@@ -47,7 +47,7 @@ from eth_utils import keccak
 
 RPC = "https://forno.celo-sepolia.celo-testnet.org"
 CHAIN = 11142220
-COUNT = 5
+COUNT = 10
 
 
 def confirmed(tx):
@@ -93,7 +93,7 @@ def main():
     if rpc(RPC, "eth_getCode", [target, "latest"]) != "0x":
         raise ValueError("Configured beneficiary must be a regular account")
     if sys.argv[1:] == ["--check-config"]:
-        print("Validated 5 derived accounts, beneficiary and Celo Sepolia RPC")
+        print(f"Validated {COUNT} derived accounts, beneficiary and Celo Sepolia RPC")
         return
 
     state = Path(os.environ["STATE_DIRECTORY"])
