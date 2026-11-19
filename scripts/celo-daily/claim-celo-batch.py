@@ -4,7 +4,9 @@ import os
 import re
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import HTTPRedirectHandler, Request, build_opener
@@ -47,7 +49,8 @@ from eth_utils import keccak
 
 RPC = "https://forno.celo-sepolia.celo-testnet.org"
 CHAIN = 11142220
-COUNT = 10
+DAILY_LIMIT = 10
+ADDRESS_POOL = 1000
 
 
 def confirmed(tx):
@@ -84,7 +87,10 @@ def main():
     key = os.environ.get("CELO_FAUCET_API_KEY", "")
     if not re.fullmatch(r"[A-Za-z0-9._~+/=-]+", key):
         raise ValueError("Configure CELO_FAUCET_API_KEY")
-    accounts = wallets(COUNT)
+    slot = datetime.now(ZoneInfo("Asia/Taipei")).date().toordinal() % (ADDRESS_POOL // DAILY_LIMIT)
+    start = slot * DAILY_LIMIT
+    accounts = wallets(start + DAILY_LIMIT)
+    indices = range(start, start + DAILY_LIMIT)
     target = accounts[0].address
     if target.lower() != os.environ.get("CELO_FAUCET_BENEFICIARY", "").lower():
         raise ValueError("Configured beneficiary must match derived index 0")
@@ -93,13 +99,14 @@ def main():
     if rpc(RPC, "eth_getCode", [target, "latest"]) != "0x":
         raise ValueError("Configured beneficiary must be a regular account")
     if sys.argv[1:] == ["--check-config"]:
-        print(f"Validated {COUNT} derived accounts, beneficiary and Celo Sepolia RPC")
+        print(f"Validated indices {start}–{start + DAILY_LIMIT - 1}, beneficiary and Celo Sepolia RPC")
         return
 
     state = Path(os.environ["STATE_DIRECTORY"])
     pending = {}
     failures = []
-    for index, account in enumerate(accounts):
+    for index in indices:
+        account = accounts[index]
         try:
             result = fetch("/api/faucet", {"beneficiary": account.address, "network": NETWORK}, key)
             request_key = result.get("key")
@@ -141,10 +148,10 @@ def main():
             # RPC exceptions may contain request data. Log the type only.
             print(f"Index {index} receipt or sweep failed ({type(error).__name__})", file=sys.stderr)
             failures.append(index)
-    if failures or len(claims) != COUNT:
-        raise ValueError(f"Batch incomplete: {len(claims)}/{COUNT} payout hashes, failed or pending indices {sorted(set(failures) | set(pending))}")
+    if failures or len(claims) != DAILY_LIMIT:
+        raise ValueError(f"Batch incomplete: {len(claims)}/{DAILY_LIMIT} payout hashes, failed or pending indices {sorted(set(failures) | set(pending))}")
     temporary = state / "last-success.tmp"
-    temporary.write_text(claims[0] + "\n")
+    temporary.write_text(claims[start] + "\n")
     temporary.replace(state / "last-success")
 
 
