@@ -1,0 +1,85 @@
+{
+  "circle_networks": [
+    "Arc Testnet",
+    "Ethereum Sepolia",
+    "Algorand Testnet",
+    "Aptos Testnet",
+    "Arbitrum Sepolia",
+    "Avalanche Fuji",
+    "Base Sepolia",
+    "Celo Sepolia",
+    "Codex Sepolia",
+    "Cronos Testnet",
+    "Edge Testnet",
+    "Hedera Testnet",
+    "HyperEVM Testnet",
+    "Injective Testnet",
+    "Ink Sepolia",
+    "Linea Sepolia",
+    "Monad Testnet",
+    "Morph Testnet",
+    "Near Testnet",
+    "Noble Testnet",
+    "OP Sepolia",
+    "Polkadot Westend",
+    "Pharos Testnet",
+    "Plasma Testnet",
+    "Plume Testnet",
+    "Polygon PoS Amoy",
+    "Sei Testnet",
+    "Solana Devnet",
+    "Sonic Testnet",
+    "Starknet Sepolia",
+    "Sui Testnet",
+    "Unichain Sepolia",
+    "Worldchain Sepolia",
+    "XDC Apothem",
+    "X Layer Testnet",
+    "Stellar Testnet",
+    "XRP Ledger Testnet",
+    "ZKsync Sepolia"
+  ],
+  "assets": [
+    "USDC",
+    "EURC",
+    "cirBTC"
+  ],
+  "note": "Assets not necessarily available on every network. Check provider UI and terms. No automated claims.",
+  "providers": [
+    {
+      "name": "Circle",
+      "url": "https://faucet.circle.com/",
+      "description": "USDC, EURC, cirBTC (availability varies by chain)"
+    },
+    {
+      "name": "Chainlink",
+      "url": "https://faucets.chain.link/",
+      "description": "LINK and some native gas tokens"
+    },
+    {
+      "name": "QuickNode",
+      "url": "https://faucet.quicknode.com/",
+      "description": "native gas tokens"
+    },
+    {
+      "name": "Google Cloud",
+      "url": "https://cloud.google.com/application/web3/faucet/ethereum/sepolia",
+      "description": "Sepolia ETH"
+    },
+    {
+      "name": "Superchain",
+      "url": "https://console.optimism.io/faucet",
+      "description": "Superchain testnet ETH"
+    },
+    {
+      "name": "Alchemy",
+      "url": "https://www.alchemy.com/faucets",
+      "description": "testnet gas tokens"
+    },
+    {
+      "name": "Wormhole directory",
+      "url": "https://wormhole.com/docs/reference/testnet-faucets/",
+      "description": "network-specific faucet directory"
+    }
+  ]
+}
