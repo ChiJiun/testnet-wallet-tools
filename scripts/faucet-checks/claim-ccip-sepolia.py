@@ -1,3 +1,4 @@
+import os
 import sys,time
 sys.path.insert(0,"/home/devspace/projects/testnet-wallet-tools")
 from wallet import wallets,rpc,fee_fields,balance
@@ -6,7 +7,9 @@ url="https://ethereum-sepolia-rpc.publicnode.com"
 chain=11155111
 assert int(rpc(url,"eth_chainId"),16)==chain
 account=wallets(1)[0]
-assert account.address.lower()=="0xdfe4764b1c980455d25cda85e6b230bae3b4fce3"
+beneficiary = os.environ.get("CELO_FAUCET_BENEFICIARY", "")
+if account.address.lower() != beneficiary.lower():
+    sys.exit("Configured beneficiary must match derived index 0")
 target=to_checksum_address("0xFd57b4ddBf88a4e07fF4e34C487b99af2Fe82a05")
 data="0x"+keccak(text="drip(address)")[:4].hex()+account.address[2:].lower().zfill(64)
 params={"from":account.address,"to":target,"data":data}
