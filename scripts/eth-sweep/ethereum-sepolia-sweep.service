@@ -1,0 +1,12 @@
+[Unit]
+Description=Sweep native ETH on Ethereum Sepolia to derived index 0
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=devspace
+EnvironmentFile=/etc/celo-faucet-beneficiary
+ExecStart=/home/devspace/projects/testnet-wallet-tools/.venv/bin/python -I /usr/local/libexec/sweep-ethereum-sepolia.py
+NoNewPrivileges=yes
+TimeoutStartSec=18min

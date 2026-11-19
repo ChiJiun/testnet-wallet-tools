@@ -1,0 +1,9 @@
+[Unit]
+Description=Daily Ethereum Sepolia ETH sweep
+
+[Timer]
+OnCalendar=*-*-* 09:25:00 Asia/Taipei
+Persistent=true
+
+[Install]
+WantedBy=timers.target
