@@ -1,0 +1,8 @@
+[Unit]
+Description=Daily Google Faucet Ethereum Sepolia claim
+
+[Timer]
+OnCalendar=*-*-* 14:30:00 Asia/Taipei
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,7 @@
+[Unit]
+Description=Check whether faucet credentials require renewal
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 -I /usr/local/libexec/faucet-auth-watchdog.py
+NoNewPrivileges=yes
