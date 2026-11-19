@@ -1,0 +1,114 @@
+{
+  "sources": [
+    {
+      "name": "Circle",
+      "url": "https://faucet.circle.com/",
+      "mode": "manual_captcha",
+      "assets": [
+        "USDC",
+        "EURC",
+        "cirBTC"
+      ],
+      "networks": "see faucets.json; per-network asset availability unverified",
+      "eligibility": "Per asset/network pairing cooldown; CAPTCHA"
+    },
+    {
+      "name": "Alchemy",
+      "url": "https://www.alchemy.com/faucets",
+      "mode": "manual_captcha",
+      "assets_by_network": {
+        "Ethereum Sepolia": "ETH",
+        "Arbitrum Sepolia": "ETH",
+        "Base Sepolia": "ETH",
+        "OP Sepolia": "ETH",
+        "Polygon PoS Amoy": "POL",
+        "Abstract Testnet": "ETH",
+        "CrossFi Testnet": "XFI",
+        "Gensyn Testnet": "ETH",
+        "GIWA Sepolia": "ETH",
+        "Humanity Testnet": "tHP",
+        "Hyperliquid Testnet": "HYPE",
+        "Ink Sepolia": "ETH",
+        "Lens Sepolia": "GRASS",
+        "Monad Testnet": "MON",
+        "Robinhood Testnet": "ETH",
+        "Shape Sepolia": "ETH",
+        "Soneium Minato": "ETH",
+        "Stable Testnet": "USDT0",
+        "Unichain Sepolia": "ETH",
+        "Worldchain Sepolia": "ETH",
+        "Worldl3 Devnet": "ETH",
+        "ZKsync Sepolia": "ETH"
+      },
+      "eligibility": "Usually 0.001 ETH mainnet and activity on same address; exceptions apply; 24h cooldown, Hyperliquid 12h"
+    },
+    {
+      "name": "Chainlink",
+      "url": "https://faucets.chain.link/",
+      "mode": "manual_wallet",
+      "assets_by_network": {
+        "Avalanche Fuji": "AVAX",
+        "Ethereum Sepolia": "ETH",
+        "Polygon PoS Amoy": "LINK",
+        "Sonic Blaze": "LINK",
+        "Arbitrum Sepolia": "ETH",
+        "OP Sepolia": "LINK",
+        "Base Sepolia": "ETH"
+      },
+      "eligibility": "Wallet connection and provider checks"
+    },
+    {
+      "name": "QuickNode",
+      "url": "https://faucet.quicknode.com/",
+      "mode": "manual",
+      "assets": [
+        "native gas token"
+      ],
+      "eligibility": "Provider rules"
+    },
+    {
+      "name": "Google Cloud",
+      "url": "https://cloud.google.com/application/web3/faucet/ethereum/sepolia",
+      "mode": "manual",
+      "assets_by_network": {
+        "Ethereum Sepolia": "ETH"
+      }
+    },
+    {
+      "name": "Superchain",
+      "url": "https://console.optimism.io/faucet",
+      "mode": "manual",
+      "assets": [
+        "ETH"
+      ],
+      "eligibility": "Supported Superchain networks and identity rules"
+    },
+    {
+      "name": "Coinbase CDP",
+      "url": "https://portal.cdp.coinbase.com/",
+      "mode": "authenticated",
+      "assets": [
+        "USDC",
+        "native gas token"
+      ],
+      "eligibility": "Developer account and applicable CDP faucet limits"
+    },
+    {
+      "name": "Solana",
+      "url": "https://faucet.solana.com/",
+      "mode": "manual_or_official_cli",
+      "assets_by_network": {
+        "Solana Devnet": "SOL"
+      }
+    },
+    {
+      "name": "Wormhole Directory",
+      "url": "https://wormhole.com/docs/reference/testnet-faucets/",
+      "mode": "directory",
+      "assets": [
+        "varies"
+      ]
+    }
+  ],
+  "warning": "Catalog is not a promise of live availability. No bulk automated claims, CAPTCHA circumvention or rate-limit evasion."
+}
